@@ -5,19 +5,21 @@ var score
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	print("hello")
-	new_game()
+	
+	
 	pass # Replace with function body.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	
 	pass
 
 
 func gameover() -> void:
 	$ScoreTimer.stop()
 	$Mobtimer.stop()
+	$HUD.show_game_over()
 
 func new_game():
 	score = 0
@@ -25,9 +27,14 @@ func new_game():
 	$StartTimer.start()
 	$HUD.update_score(score)
 	$HUD.show_message("Get Ready")
+	
+	
+	
 
 func _on_mobtimer_timeout() -> void:
-	$HUD.update_score(score)
+	$HUD.show_message("")
+	$HUD.hide_button()
+	
 	# Create a new instance of the Mob scene.
 
 
@@ -64,3 +71,4 @@ func _on_scoretimer_timeout() -> void:
 func _on_starttimer_timeout() -> void:
 	$Mobtimer.start()
 	$ScoreTimer.start()
+	$HUD.update_score(score)
