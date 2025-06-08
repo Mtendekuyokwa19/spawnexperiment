@@ -17,30 +17,35 @@ func _process(delta: float) -> void:
 
 
 func gameover() -> void:
-	$ScoreTimer.stop()
+	#$ScoreTimer.stop()
 	$Mobtimer.stop()
 	$HUD.show_game_over()
+	#$Music.stop()
+	$Deathsound.play()
+	get_tree().call_group("mobs", "queue_free")
 
 func new_game():
 	score = 0
-	$Player.start($StartPosition.position)
+	#$Player.start($StartPosition.position)
 	$StartTimer.start()
 	$HUD.update_score(score)
-	$HUD.show_message("Get Ready")
-	
+	$HUD.show_message("Loading...please wait ")
+	get_tree().call_group("mobs", "queue_free")
+	#$Music.play()
 	
 	
 
 func _on_mobtimer_timeout() -> void:
 	$HUD.show_message("")
-	$HUD.hide_button()
+	#$HUD.hide_button()
 	
 	# Create a new instance of the Mob scene.
 
 
 	# Choose a random location on Path2D.
-	for spawns in range(1,10):
+	for spawns in range(1,number_of_spawns()):
 		var mob = mob_scene.instantiate()
+		$Spawn.play()
 		var mob_spawn_location = $MobPath/MobSpawnLocation
 		mob_spawn_location.progress_ratio = randf()
 
@@ -65,10 +70,21 @@ func _on_mobtimer_timeout() -> void:
 
 func _on_scoretimer_timeout() -> void:
 	score=+1
+	#$HUD.update_score(score)
 	pass # Replace with function body.
 
 
 func _on_starttimer_timeout() -> void:
 	$Mobtimer.start()
 	$ScoreTimer.start()
-	$HUD.update_score(score)
+	#$HUD.update_score(score)
+
+
+func _on_score_timer_timeout() -> void:
+	pass # Replace with function body.
+
+func number_of_spawns():
+	var variables_of_weather=$HUD.get_variables();
+	var amount_of_organism=0.5*variables_of_weather["water"]+0.03*variables_of_weather["humidity"]-0.05*(variables_of_weather["temperature"]-30)+0.5*variables_of_weather["cloud"]
+	print(variables_of_weather)
+	return int(amount_of_organism);
